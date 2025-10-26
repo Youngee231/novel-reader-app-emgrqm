@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -37,17 +37,7 @@ export default function BrowseRepositoryScreen() {
   const [loading, setLoading] = useState(true);
   const [pathHistory, setPathHistory] = useState<string[]>(['']);
 
-  useEffect(() => {
-    loadRepository();
-  }, []);
-
-  useEffect(() => {
-    if (repository) {
-      loadFiles(currentPath);
-    }
-  }, [repository, currentPath]);
-
-  const loadRepository = async () => {
+  const loadRepository = useCallback(async () => {
     try {
       const repositories = await loadRepositories();
       const repo = repositories.find(r => r.id === params.repositoryId);
@@ -64,9 +54,9 @@ export default function BrowseRepositoryScreen() {
       Alert.alert('Error', 'Failed to load repository');
       router.back();
     }
-  };
+  }, [params.repositoryId, router]);
 
-  const loadFiles = async (path: string) => {
+  const loadFiles = useCallback(async (path: string) => {
     if (!repository) return;
     
     setLoading(true);
@@ -108,7 +98,17 @@ export default function BrowseRepositoryScreen() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [repository]);
+
+  useEffect(() => {
+    loadRepository();
+  }, [loadRepository]);
+
+  useEffect(() => {
+    if (repository) {
+      loadFiles(currentPath);
+    }
+  }, [repository, currentPath, loadFiles]);
 
   const handleFilePress = (file: FileItem) => {
     if (file.type === 'dir') {

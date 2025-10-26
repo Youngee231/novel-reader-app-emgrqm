@@ -7,7 +7,7 @@ export function parseRepositoryUrl(url: string): Partial<Repository> | null {
     url = url.trim().replace(/\/$/, '');
     
     // GitHub pattern: https://github.com/owner/repo
-    const githubMatch = url.match(/github\.com\/([^\/]+)\/([^\/]+)/);
+    const githubMatch = url.match(/github\.com\/([^/]+)\/([^/]+)/);
     if (githubMatch) {
       return {
         type: 'github',
@@ -18,7 +18,7 @@ export function parseRepositoryUrl(url: string): Partial<Repository> | null {
     }
     
     // GitLab pattern: https://gitlab.com/owner/repo
-    const gitlabMatch = url.match(/gitlab\.com\/([^\/]+)\/([^\/]+)/);
+    const gitlabMatch = url.match(/gitlab\.com\/([^/]+)\/([^/]+)/);
     if (gitlabMatch) {
       return {
         type: 'gitlab',

@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   View,
   Text,
@@ -42,11 +42,7 @@ export default function ReaderScreen() {
     theme: 'light' as 'light' | 'dark' | 'sepia',
   });
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       const repositories = await loadRepositories();
       const repo = repositories.find(r => r.id === params.repositoryId);
@@ -87,7 +83,11 @@ export default function ReaderScreen() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [params.repositoryId, params.filePath, router]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const handleTranslate = async () => {
     if (!content) return;
